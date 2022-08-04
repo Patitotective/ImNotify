@@ -2,21 +2,12 @@ import std/strformat
 import nimgl/imgui
 import imnotify/[utils, icons] 
 
-# defined NOTIFY_USE_SEPARATOR
-
-#define NOTIFY_INLINE         inline
-#define NOTIFY_NULL_OR_EMPTY(str)   (!str ||! strlen(str))
-#define NOTIFY_FORMAT(fn, format, ...)  if (format) { va_list args va_start(args, format) fn(format, args, __VA_ARGS__) va_end(args) }
-
 type
   ToastKind* = enum
     None, Success, Warning, Error, Info
 
   ToastPhase* = enum
     FadeIn, Wait, FadeOut, Expired
-
-  ToastPos* = enum
-    TopLeft, TopCenter, TopRight, BottomLeft, BottomCenter, BottomRight, Center
 
   Toast* = object
     kind*: ToastKind
@@ -38,8 +29,7 @@ proc toast*(kind: ToastKind, content: string, title = "", dismissTime = 3000i64,
 
 proc add*(self: var Notifications, toast: Toast) =
   self.data.add(toast)
-  assert self.data[^1].padding != toast.padding
-  echo self.data[^1].padding, " - ", toast.padding
+  self.data[^1].padding = toast.padding # https://github.com/nimgl/nimgl/issues/83 :[
 
 proc getDefaultTitle*(self: Toast): string = 
   result = self.title
@@ -109,7 +99,8 @@ proc draw*(self: var Notifications) =
     igPushStyleVar(Alpha, opacity)
     igPushStyleVar(WindowRounding, toast.rounding)
     igPushStyleVar(WindowPadding, toast.padding)
-    # igPushStyleColor(WindowBg, igGetColorU32(ChildBg))
+    let col = igGetStyle().colors[ord ChildBg]
+    igPushStyleColor(WindowBg, igVec4(col.x, col.y, col.z, opacity))
 
     igSetNextWindowPos(igVec2(size.x - toast.padding.x, size.y - self.spacing - height), ImGuiCond.Always, igVec2(1f, 1f))
     igSetNextWindowSize(igVec2(toast.width, 0))

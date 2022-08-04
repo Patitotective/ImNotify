@@ -60,7 +60,7 @@ proc main() =
     if igButton("Success"):
       notif.add(toast(ToastKind.Success, "Something was successfully completed", separator = true))
     if igButton("Warning"):
-      notif.add(toast(ToastKind.Warning, "Warning, something happened", padding = ImVec2(x: 30, y: 30)))
+      notif.add(toast(ToastKind.Warning, "Warning, something happened"))
     if igButton("Error"):
       notif.add(toast(ToastKind.Error, "Something errored"))
     if igButton("Info"):
