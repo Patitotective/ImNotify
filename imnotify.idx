@@ -19,9 +19,10 @@ addSuccess	imnotify.html#addSuccess,Toaster,string,string	imnotify: addSuccess(s
 addWarning	imnotify.html#addWarning,Toaster,string,string	imnotify: addWarning(self: var Toaster; content: string; title = &quot;&quot;)	
 addError	imnotify.html#addError,Toaster,string,string	imnotify: addError(self: var Toaster; content: string; title = &quot;&quot;)	
 addNone	imnotify.html#addNone,Toaster,string,string	imnotify: addNone(self: var Toaster; content: string; title = &quot;&quot;)	
-getDefaultTitle	imnotify.html#getDefaultTitle,Toast	imnotify: getDefaultTitle(self: Toast): string	
+getTitle	imnotify.html#getTitle,Toast	imnotify: getTitle(self: Toast): string	
 getIcon	imnotify.html#getIcon,Toast	imnotify: getIcon(self: Toast): string	
 getElapsedTime	imnotify.html#getElapsedTime,Toast	imnotify: getElapsedTime(self: Toast): int64	
 getPhase	imnotify.html#getPhase,Toast	imnotify: getPhase(self: Toast): ToastPhase	
 getFadePercent	imnotify.html#getFadePercent,Toast	imnotify: getFadePercent(self: Toast): float32	
 draw	imnotify.html#draw,Toaster	imnotify: draw(self: var Toaster)	
+Basic	imnotify.html#basic	  Basic	
