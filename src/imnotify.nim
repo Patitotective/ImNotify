@@ -12,24 +12,68 @@ type
   Toast* = object
     kind*: ToastKind
     title*, content*: string
-    creationTime, dismissTime*, fadeInOutTime*: int64 ## In milliseconds
+    creationTime, dismissTime*, fadeInOutTime*: int64 ## In milliseconds. Pass a negative number to dismissTime to disable automatic dismiss.
     padding*: ImVec2
     opacity*, rounding*, width*: float32
     separator*: bool ## Draw a separator between the title and content
+    rightMargin*: float32 ## Space from the right side
+    closeBtn*: bool ## Draw a close button
 
-  Notifications* = object
+  Toaster* = object
     data: seq[Toast]
     spacing*: float32 ## Spacing between each toast
 
-proc notifications*(spacing = 10f): Notifications = 
-  Notifications(spacing: spacing)
+proc initToaster*(spacing = 10f): Toaster = 
+  Toaster(spacing: spacing)
 
-proc toast*(kind: ToastKind, content: string, title = "", dismissTime = 3000i64, fadeInOutTime = 150i64, padding = igVec2(10, 10),  opacity = 1f, rounding = 5f, width = 200f, separator = false): Toast = 
-  Toast(kind: kind, content: content, title: title, creationTime: getMilliseconds(), dismissTime: dismissTime, fadeInOutTime: fadeInOutTime, padding: padding, opacity: opacity, rounding: rounding, width: width, separator: separator)
+proc initToast*(
+  kind: ToastKind, 
+  content: string, 
+  title = "", 
+  dismissTime = 5000i64,
+  fadeInOutTime = 300i64, 
+  padding = igVec2(10, 10), 
+  opacity = 1f, 
+  rounding = 5f, 
+  width = 200f, 
+  separator = true, 
+  rightMargin = 10f, 
+  closeBtn = true, 
+): Toast = 
+  Toast(
+    kind: kind, 
+    content: content, 
+    title: title, 
+    creationTime: getMilliseconds(), 
+    dismissTime: dismissTime, 
+    fadeInOutTime: fadeInOutTime, 
+    padding: padding, 
+    opacity: opacity, 
+    rounding: rounding, 
+    width: width, 
+    separator: separator, 
+    rightMargin: rightMargin, 
+    closeBtn: closeBtn, 
+  )
 
-proc add*(self: var Notifications, toast: Toast) =
+proc add*(self: var Toaster, toast: Toast) =
   self.data.add(toast)
   self.data[^1].padding = toast.padding # https://github.com/nimgl/nimgl/issues/83 :[
+
+proc addInfo*(self: var Toaster, content: string, title = "") = 
+  self.data.add(initToast(ToastKind.Info, content, title))
+
+proc addSuccess*(self: var Toaster, content: string, title = "") = 
+  self.data.add(initToast(ToastKind.Success, content, title))
+
+proc addWarning*(self: var Toaster, content: string, title = "") = 
+  self.data.add(initToast(ToastKind.Warning, content, title))
+
+proc addError*(self: var Toaster, content: string, title = "") = 
+  self.data.add(initToast(ToastKind.Error, content, title))
+
+proc addNone*(self: var Toaster, content: string, title = "") = 
+  self.data.add(initToast(ToastKind.None, content, title))
 
 proc getDefaultTitle*(self: Toast): string = 
   result = self.title
@@ -57,10 +101,11 @@ proc getElapsedTime*(self: Toast): int64 = getMilliseconds() - self.creationTime
 
 proc getPhase*(self: Toast): ToastPhase = 
   let elapsed = self.getElapsedTime()
+  let dismiss = self.dismissTime >= 0
 
-  if elapsed > self.fadeInOutTime + self.dismissTime + self.fadeInOutTime:
+  if dismiss and elapsed > self.fadeInOutTime + self.dismissTime + self.fadeInOutTime:
     ToastPhase.Expired
-  elif elapsed > self.fadeInOutTime + self.dismissTime:
+  elif dismiss and elapsed > self.fadeInOutTime + self.dismissTime:
     ToastPhase.FadeOut
   elif elapsed > self.fadeInOutTime:
     ToastPhase.Wait
@@ -79,19 +124,19 @@ proc getFadePercent*(self: Toast): float32 =
     else:
       1f * self.opacity
 
-proc draw*(self: var Notifications) = 
+proc draw*(self: var Toaster) = 
+  let style = igGetStyle()
   let size = igGetMainViewport().size
 
-  var height = 0f
+  var height = self.spacing
   var expired: seq[int] # List of toast indexes that are already expired therefore will be deleten
 
-  for e, toast in self.data:
-    # Remove toast if expired
-    if toast.getPhase() == ToastPhase.Expired:
+  for e in countdown(self.data.high, 0):
+    let toast = self.data[e]
+    if toast.getPhase() == ToastPhase.Expired: # Remove toast if expired
       expired.add(e)
       continue
 
-    # Get icon, title and other data
     let icon = toast.getIcon()
     let defaultTitle = toast.getDefaultTitle()
     let opacity = toast.getFadePercent() # Get opacity based of the current phase
@@ -99,47 +144,43 @@ proc draw*(self: var Notifications) =
     igPushStyleVar(Alpha, opacity)
     igPushStyleVar(WindowRounding, toast.rounding)
     igPushStyleVar(WindowPadding, toast.padding)
-    let col = igGetStyle().colors[ord ChildBg]
-    igPushStyleColor(WindowBg, igVec4(col.x, col.y, col.z, opacity))
 
-    igSetNextWindowPos(igVec2(size.x - toast.padding.x, size.y - self.spacing - height), ImGuiCond.Always, igVec2(1f, 1f))
+    igSetNextWindowPos(igVec2(size.x - toast.rightMargin, size.y - height), pivot = igVec2(1f, 1f)) # Set pivot to bottom-right
     igSetNextWindowSize(igVec2(toast.width, 0))
+    igSetNextWindowBgAlpha(opacity)
 
-    if igBegin(cstring &"##TOAST{e}", flags = makeFlags(ImGuiWindowFlags.NoDecoration, ImGuiWindowFlags.NoInputs, ImGuiWindowFlags.NoNav, ImGuiWindowFlags.NoBringToFrontOnFocus, ImGuiWindowFlags.NoFocusOnAppearing)):
-      igGetCurrentWindow().igBringWindowToDisplayFront()
-      # Here we render the toast content
-      igPushTextWrapPos(toast.width) # We want to support multi-line text, this will wrap the text after 1/3 of the screen width
+    if igBegin(cstring &"##TOAST{e}", flags = makeFlags(ImGuiWindowFlags.NoDecoration, ImGuiWindowFlags.NoNav, ImGuiWindowFlags.NoBringToFrontOnFocus, ImGuiWindowFlags.NoFocusOnAppearing, ImGuiWindowFlags.NoSavedSettings)):
+      let window = igGetCurrentWindow()
 
-      let titleRendered = icon.len != 0 or defaultTitle.len != 0
+      window.igBringWindowToDisplayFront()
+      igPushTextWrapPos(igGetContentRegionAvail().x)
 
-      # If an icon is set
       if icon.len != 0:
         igText(cstring icon)
 
-      # If a title is set
       if defaultTitle.len != 0:
-        # If a title and an icon is set, we want to render on same line
         if icon.len != 0:
           igSameLine()
 
-        igText(cstring defaultTitle) # Render title text
+        igText(cstring defaultTitle)
 
-      # In case ANYTHING was rendered in the top, we want to add a small padding so the text (or icon) looks centered vertically
-      if titleRendered and toast.content.len != 0:
-        igSetCursorPosY(igGetCursorPosY() + 5f) # Must be a better way to do this!!!!
+      if toast.closeBtn and igCloseButton(
+        window.getID("#CLOSE"), 
+        igVec2((window.pos.x + window.size.x) - igGetFontSize() - (style.framePadding.x * 2) - style.framePadding.x, window.pos.y + style.framePadding.y)
+      ):
+        expired.add(e)
 
-      # If a content is set
-      if toast.content.len != 0 and titleRendered:
-        if toast.separator:
+      if toast.content.len != 0:
+        if toast.separator and defaultTitle.len != 0: # Do not draw a separator when there is no title
           igSeparator()
 
-        igText(cstring toast.content) # Render content text
+        igText(cstring toast.content)
 
       igPopTextWrapPos()
 
-      height += igGetWindowHeight()
+      height += igGetWindowHeight() + self.spacing
 
-    igEnd(); igPopStyleVar(3); igPopStyleColor()
+    igEnd(); igPopStyleVar(3)
 
   for i in expired:
     self.data.delete(i)
