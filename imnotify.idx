@@ -1,0 +1,27 @@
+None	imnotify.html#None	ToastKind.None	
+Success	imnotify.html#Success	ToastKind.Success	
+Warning	imnotify.html#Warning	ToastKind.Warning	
+Error	imnotify.html#Error	ToastKind.Error	
+Info	imnotify.html#Info	ToastKind.Info	
+ToastKind	imnotify.html#ToastKind	imnotify: ToastKind	
+FadeIn	imnotify.html#FadeIn	ToastPhase.FadeIn	
+Wait	imnotify.html#Wait	ToastPhase.Wait	
+FadeOut	imnotify.html#FadeOut	ToastPhase.FadeOut	
+Expired	imnotify.html#Expired	ToastPhase.Expired	
+ToastPhase	imnotify.html#ToastPhase	imnotify: ToastPhase	
+Toast	imnotify.html#Toast	imnotify: Toast	
+Toaster	imnotify.html#Toaster	imnotify: Toaster	
+initToaster	imnotify.html#initToaster,float32	imnotify: initToaster(spacing = 10.0&apos;f32): Toaster	
+initToast	imnotify.html#initToast,ToastKind,string,string,int64,int64,float32,float32,float32,float32	imnotify: initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000&apos;i64;\n          fadeInOutTime = 300&apos;i64; padding = igVec2(10, 10); opacity = 1.0&apos;f32;\n          rounding = 5.0&apos;f32; width = 200.0&apos;f32; separator = true;\n          rightMargin = 10.0&apos;f32; closeBtn = true): Toast	
+add	imnotify.html#add,Toaster,Toast	imnotify: add(self: var Toaster; toast: Toast)	
+addInfo	imnotify.html#addInfo,Toaster,string,string	imnotify: addInfo(self: var Toaster; content: string; title = &quot;&quot;)	
+addSuccess	imnotify.html#addSuccess,Toaster,string,string	imnotify: addSuccess(self: var Toaster; content: string; title = &quot;&quot;)	
+addWarning	imnotify.html#addWarning,Toaster,string,string	imnotify: addWarning(self: var Toaster; content: string; title = &quot;&quot;)	
+addError	imnotify.html#addError,Toaster,string,string	imnotify: addError(self: var Toaster; content: string; title = &quot;&quot;)	
+addNone	imnotify.html#addNone,Toaster,string,string	imnotify: addNone(self: var Toaster; content: string; title = &quot;&quot;)	
+getDefaultTitle	imnotify.html#getDefaultTitle,Toast	imnotify: getDefaultTitle(self: Toast): string	
+getIcon	imnotify.html#getIcon,Toast	imnotify: getIcon(self: Toast): string	
+getElapsedTime	imnotify.html#getElapsedTime,Toast	imnotify: getElapsedTime(self: Toast): int64	
+getPhase	imnotify.html#getPhase,Toast	imnotify: getPhase(self: Toast): ToastPhase	
+getFadePercent	imnotify.html#getFadePercent,Toast	imnotify: getFadePercent(self: Toast): float32	
+draw	imnotify.html#draw,Toaster	imnotify: draw(self: var Toaster)	
