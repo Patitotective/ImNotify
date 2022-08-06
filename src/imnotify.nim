@@ -1,3 +1,13 @@
+## ## Basic
+## ```nim
+## var toaster = initToaster(spacing = 10f) # Spacing between toasts
+## toaster.add(initToast(ToastKind.Info, "I'm a notification full of useful information", title = "Hello"))
+## 
+## # Inside Dear ImGui main loop
+## ...
+## toaster.draw()
+## ```
+
 import std/strformat
 import nimgl/imgui
 import imnotify/[utils, icons] 
@@ -61,21 +71,27 @@ proc add*(self: var Toaster, toast: Toast) =
   self.data[^1].padding = toast.padding # https://github.com/nimgl/nimgl/issues/83 :[
 
 proc addInfo*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Info` kind.
   self.data.add(initToast(ToastKind.Info, content, title))
 
 proc addSuccess*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Sucess` kind.
   self.data.add(initToast(ToastKind.Success, content, title))
 
 proc addWarning*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Warning` kind.
   self.data.add(initToast(ToastKind.Warning, content, title))
 
 proc addError*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Error` kind.
   self.data.add(initToast(ToastKind.Error, content, title))
 
 proc addNone*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `None` of `Info` kind.
   self.data.add(initToast(ToastKind.None, content, title))
 
-proc getDefaultTitle*(self: Toast): string = 
+proc getTitle*(self: Toast): string = 
+  ## Returns the title or each `ToastKind` default title if the title is empty.
   result = self.title
 
   if result.len == 0:
@@ -85,6 +101,7 @@ proc getDefaultTitle*(self: Toast): string =
       result = $self.kind
 
 proc getIcon*(self: Toast): string = 
+  ## Returns each `ToastKind` (ForkAwesome) icon.
   case self.kind
   of ToastKind.None:
     ""
@@ -97,9 +114,12 @@ proc getIcon*(self: Toast): string =
   of ToastKind.Info:
     FA_InfoCircle
 
-proc getElapsedTime*(self: Toast): int64 = getMilliseconds() - self.creationTime
+proc getElapsedTime*(self: Toast): int64 =
+  ## Ellapsed time in milliseconds since toast's creation.
+  getMilliseconds() - self.creationTime
 
 proc getPhase*(self: Toast): ToastPhase = 
+  ## Returns toast fade in out animation phase.
   let elapsed = self.getElapsedTime()
   let dismiss = self.dismissTime >= 0
 
@@ -113,6 +133,7 @@ proc getPhase*(self: Toast): ToastPhase =
     ToastPhase.FadeIn
 
 proc getFadePercent*(self: Toast): float32 = 
+  ## Returns current toast opacity based upon it's phase.
   let phase = self.getPhase()
   let elapsed = self.getElapsedTime()
 
@@ -125,6 +146,7 @@ proc getFadePercent*(self: Toast): float32 =
       1f * self.opacity
 
 proc draw*(self: var Toaster) = 
+  ## Draw all toasts. Call this in your main Dear ImGui loop.
   let style = igGetStyle()
   let size = igGetMainViewport().size
 
@@ -138,7 +160,7 @@ proc draw*(self: var Toaster) =
       continue
 
     let icon = toast.getIcon()
-    let defaultTitle = toast.getDefaultTitle()
+    let defaultTitle = toast.getTitle()
     let opacity = toast.getFadePercent() # Get opacity based of the current phase
 
     igPushStyleVar(Alpha, opacity)

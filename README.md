@@ -15,6 +15,8 @@ toaster.add(initToast(ToastKind.Info, "I'm a notification full of useful informa
 toaster.draw()
 ```
 
+Read the [docs](https://patitotective.github.io/imnotify) for more.
+
 ## Toast Properties
 - `kind`: success, error, warning, info or none. It is used to show an icon using [ForkAwesome](https://github.com/patrickcjk/imgui-notify), therefore you need to load an icon font, check out [demo.nim](https://github.com/Patitotective/ImNotify/blob/main/demo/demo.nim).
 - `dismissTime`: Dismiss toast after `n` milliseconds. Pass a negative number to disable automatic dismiss.
