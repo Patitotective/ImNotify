@@ -1,7 +1,7 @@
 # ImNotify
-Dear ImGui Nim library that draws some nice-looking notifications. (Based upon https://github.com/patrickcjk/imgui-notify)
+Dear ImGui Nim library that draws some nice-looking notifications. (Based upon [patrickcjk/imgui-notify](https://github.com/patrickcjk/imgui-notify))
 
-```console
+```
 nimble install imnotify
 ```
 
@@ -38,12 +38,13 @@ igPopStyleColor()
 ## Demo
 For an interactive demo see [demo/](https://github.com/Patitotective/ImNotify/tree/main/demo).  
 You have to have nimgl and imnotify installed.
-```console
+```
 git clone https://github.com/Patitotective/ImNotify
 cd ImNotify/demo
 nim c -r demo
 ```
 
+https://user-images.githubusercontent.com/79225325/183262973-1a52eda5-0dec-4b87-9c2b-62daa57f8d68.mp4
 
 ## About
 - GitHub: https://github.com/Patitotective/ImNotify.
