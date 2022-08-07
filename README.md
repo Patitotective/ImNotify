@@ -29,13 +29,7 @@ Read the [docs](https://patitotective.github.io/imnotify) for more.
 - `rightMargin`: Distance between the toast and viewport's right side.
 - `closeBtn`: Draw a close button.
 
-_Note: To change toast's background do:_
-```nim
-...
-igPushStyleColor(WindowBg, newColor)
-toaster.draw()
-igPopStyleColor()
-```
+_Note: to modify a toast colors use `FrameBg` and `FrameBgHovered` before `toaster.draw()`._
 
 ## Demo
 For an interactive demo see [demo/](https://github.com/Patitotective/ImNotify/tree/main/demo).  

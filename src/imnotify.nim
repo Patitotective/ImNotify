@@ -25,16 +25,17 @@ type
     creationTime, dismissTime*, fadeInOutTime*: int64 ## In milliseconds. Pass a negative number to dismissTime to disable automatic dismiss.
     padding*: ImVec2
     opacity*, rounding*, width*: float32
-    separator*: bool ## Draw a separator between the title and content
-    rightMargin*: float32 ## Space from the right side
-    closeBtn*: bool ## Draw a close button
+    separator*: bool ## Draw a separator between the title and content.
+    rightMargin*: float32 ## Space from the right side.
+    closeBtn*: bool ## Draw a close button.
 
   Toaster* = object
     data: seq[Toast]
+    hovered: int ## Index of the toast hovered
     spacing*: float32 ## Spacing between each toast
 
 proc initToaster*(spacing = 10f): Toaster = 
-  Toaster(spacing: spacing)
+  Toaster(spacing: spacing, hovered: -1)
 
 proc initToast*(
   kind: ToastKind, 
@@ -152,10 +153,16 @@ proc draw*(self: var Toaster) =
 
   var height = self.spacing
   var expired: seq[int] # List of toast indexes that are already expired therefore will be deleten
+  var anyHovered = false
 
   for e in countdown(self.data.high, 0):
     let toast = self.data[e]
+    let isHovered = self.hovered == e
+
     if toast.getPhase() == ToastPhase.Expired: # Remove toast if expired
+      if isHovered:
+        self.hovered = -1
+
       expired.add(e)
       continue
 
@@ -166,6 +173,10 @@ proc draw*(self: var Toaster) =
     igPushStyleVar(Alpha, opacity)
     igPushStyleVar(WindowRounding, toast.rounding)
     igPushStyleVar(WindowPadding, toast.padding)
+    if isHovered:
+      igPushStyleColor(WindowBg, igGetColorU32(FrameBgHovered))
+    else:
+      igPushStyleColor(WindowBg, igGetColorU32(FrameBg))
 
     igSetNextWindowPos(igVec2(size.x - toast.rightMargin, size.y - height), pivot = igVec2(1f, 1f)) # Set pivot to bottom-right
     igSetNextWindowSize(igVec2(toast.width, 0))
@@ -202,7 +213,14 @@ proc draw*(self: var Toaster) =
 
       height += igGetWindowHeight() + self.spacing
 
-    igEnd(); igPopStyleVar(3)
+      if igIsWindowHovered():
+        anyHovered = true
+        self.hovered = e
+
+    igEnd(); igPopStyleVar(3); igPopStyleColor()
+    
+  if not anyHovered:
+    self.hovered = -1
 
   for i in expired:
     self.data.delete(i)
