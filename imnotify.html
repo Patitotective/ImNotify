@@ -117,12 +117,15 @@ window.addEventListener('DOMContentLoaded', main);
   opacity*, rounding*, width*: float32
   separator*: bool           ## Draw a separator between the title and content.
   rightMargin*: float32      ## Space from the right side.
-  closeBtn*: bool            ## Draw a close button.">Toast</a></li>
+  closeBtn*: bool            ## Draw a close button.
+  bgColor*, hoveredBgColor*: ImVec4">Toast</a></li>
   <li><a class="reference" href="#Toaster"
     title="Toaster = object
   data: seq[Toast]
   hovered: int               ## Index of the toast hovered
-  spacing*: float32          ## Spacing between each toast">Toaster</a></li>
+  spacing*: float32          ## Spacing between each toast
+  freeze*: bool              ## Freeze all toasts so they do not dismiss automatically.
+  bgColor*, hoveredBgColor*: ImVec4 ## This colors will be applied to any toast that has negative colors.">Toaster</a></li>
   <li><a class="reference" href="#ToastKind"
     title="ToastKind = enum
   None, Success, Warning, Error, Info">ToastKind</a></li>
@@ -200,15 +203,21 @@ window.addEventListener('DOMContentLoaded', main);
     title="initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000'i64;
           fadeInOutTime = 300'i64; padding = igVec2(10, 10); opacity = 1.0'f32;
           rounding = 5.0'f32; width = 200.0'f32; separator = true;
-          rightMargin = 10.0'f32; closeBtn = true): Toast">initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000'i64;
+          rightMargin = 10.0'f32; closeBtn = true;
+          bgColor, hoveredBgColor = igVec4(-1, -1, -1, -1)): Toast">initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000'i64;
           fadeInOutTime = 300'i64; padding = igVec2(10, 10); opacity = 1.0'f32;
           rounding = 5.0'f32; width = 200.0'f32; separator = true;
-          rightMargin = 10.0'f32; closeBtn = true): Toast</a></li>
+          rightMargin = 10.0'f32; closeBtn = true;
+          bgColor, hoveredBgColor = igVec4(-1, -1, -1, -1)): Toast</a></li>
 
   </ul>
   <ul class="simple nested-toc-section">initToaster
       <li><a class="reference" href="#initToaster%2Cfloat32"
-    title="initToaster(spacing = 10.0'f32): Toaster">initToaster(spacing = 10.0'f32): Toaster</a></li>
+    title="initToaster(spacing = 10.0'f32;
+            bgColor = igVec4(0.078'f32, 0.078'f32, 0.078'f32, 1.0'f32);
+            hoveredBgColor = igVec4(0.137'f32, 0.137'f32, 0.137'f32, 1.0'f32)): Toaster">initToaster(spacing = 10.0'f32;
+            bgColor = igVec4(0.078'f32, 0.078'f32, 0.078'f32, 1.0'f32);
+            hoveredBgColor = igVec4(0.137'f32, 0.137'f32, 0.137'f32, 1.0'f32)): Toaster</a></li>
 
   </ul>
 
@@ -253,7 +262,8 @@ class="link-seesrc" target="_blank">Source</a>
   <span class="Identifier">separator</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>           <span class="Comment">## Draw a separator between the title and content.</span>
   <span class="Identifier">rightMargin</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float32</span>      <span class="Comment">## Space from the right side.</span>
   <span class="Identifier">closeBtn</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>            <span class="Comment">## Draw a close button.</span>
-  </pre></dt>
+  <span class="Identifier">bgColor</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">hoveredBgColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">ImVec4</span>
+</pre></dt>
 <dd>
 
 
@@ -269,14 +279,16 @@ class="link-seesrc" target="_blank">Source</a>
   <span class="Identifier">data</span><span class="Other">:</span> <span class="Identifier">seq</span><span class="Other">[</span><a href="imnotify.html#Toast"><span class="Identifier">Toast</span></a><span class="Other">]</span>
   <span class="Identifier">hovered</span><span class="Other">:</span> <span class="Identifier">int</span>               <span class="Comment">## Index of the toast hovered</span>
   <span class="Identifier">spacing</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">float32</span>          <span class="Comment">## Spacing between each toast</span>
+  <span class="Identifier">freeze</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">bool</span>              <span class="Comment">## Freeze all toasts so they do not dismiss automatically.</span>
+  <span class="Identifier">bgColor</span><span class="Operator">*</span><span class="Other">,</span> <span class="Identifier">hoveredBgColor</span><span class="Operator">*</span><span class="Other">:</span> <span class="Identifier">ImVec4</span> <span class="Comment">## This colors will be applied to any toast that has negative colors.</span>
   </pre></dt>
 <dd>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L32"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L33"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L32" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L33" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -317,9 +329,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L70"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L131"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L70" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L131" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -330,9 +342,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Helper procedure that creates a <tt class="docutils literal"><span class="pre"><span class="Identifier">Toast</span></span></tt> of <tt class="docutils literal"><span class="pre"><span class="Identifier">Error</span></span></tt> kind.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L86"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L160"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L86" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L160" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -343,9 +355,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Helper procedure that creates a <tt class="docutils literal"><span class="pre"><span class="Identifier">Toast</span></span></tt> of <tt class="docutils literal"><span class="pre"><span class="Identifier">Info</span></span></tt> kind.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L74"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L148"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L74" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L148" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -356,9 +368,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Helper procedure that creates a <tt class="docutils literal"><span class="pre"><span class="Identifier">None</span></span></tt> of <tt class="docutils literal"><span class="pre"><span class="Identifier">Info</span></span></tt> kind.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L90"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L164"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L90" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L164" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -369,9 +381,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Helper procedure that creates a <tt class="docutils literal"><span class="pre"><span class="Identifier">Toast</span></span></tt> of <tt class="docutils literal"><span class="pre"><span class="Identifier">Sucess</span></span></tt> kind.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L78"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L152"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L78" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L152" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -382,9 +394,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Helper procedure that creates a <tt class="docutils literal"><span class="pre"><span class="Identifier">Toast</span></span></tt> of <tt class="docutils literal"><span class="pre"><span class="Identifier">Warning</span></span></tt> kind.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L82"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L156"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L82" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L156" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -394,9 +406,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Draw all toasts. Call this in your main Dear ImGui loop.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L149"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L168"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L149" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L168" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -406,9 +418,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Ellapsed time in milliseconds since toast's creation.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L118"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L100"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L100" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -418,9 +430,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Returns current toast opacity based upon it's phase.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L136"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L118"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L136" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L118" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -430,9 +442,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Returns each <tt class="docutils literal"><span class="pre"><span class="Identifier">ToastKind</span></span></tt> (ForkAwesome) icon.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L104"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L86"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L104" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L86" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -442,9 +454,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Returns toast fade in out animation phase.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L122"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L104"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L122" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L104" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -454,9 +466,9 @@ class="link-seesrc" target="_blank">Source</a>
 
 Returns the title or each <tt class="docutils literal"><span class="pre"><span class="Identifier">ToastKind</span></span></tt> default title if the title is empty.
 &nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L94"
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L76"
 class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L94" class="link-seesrc" target="_blank" >Edit</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L76" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -465,7 +477,23 @@ class="link-seesrc" target="_blank">Source</a>
                <span class="Identifier">dismissTime</span> <span class="Other">=</span> <span class="DecNumber">5000'i64</span><span class="Other">;</span> <span class="Identifier">fadeInOutTime</span> <span class="Other">=</span> <span class="DecNumber">300'i64</span><span class="Other">;</span>
                <span class="Identifier">padding</span> <span class="Other">=</span> <span class="Identifier">igVec2</span><span class="Other">(</span><span class="DecNumber">10</span><span class="Other">,</span> <span class="DecNumber">10</span><span class="Other">)</span><span class="Other">;</span> <span class="Identifier">opacity</span> <span class="Other">=</span> <span class="FloatNumber">1.0'f32</span><span class="Other">;</span> <span class="Identifier">rounding</span> <span class="Other">=</span> <span class="FloatNumber">5.0'f32</span><span class="Other">;</span>
                <span class="Identifier">width</span> <span class="Other">=</span> <span class="FloatNumber">200.0'f32</span><span class="Other">;</span> <span class="Identifier">separator</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">rightMargin</span> <span class="Other">=</span> <span class="FloatNumber">10.0'f32</span><span class="Other">;</span>
-               <span class="Identifier">closeBtn</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">)</span><span class="Other">:</span> <a href="imnotify.html#Toast"><span class="Identifier">Toast</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span>.}</pre></dt>
+               <span class="Identifier">closeBtn</span> <span class="Other">=</span> <span class="Identifier">true</span><span class="Other">;</span> <span class="Identifier">bgColor</span><span class="Other">,</span> <span class="Identifier">hoveredBgColor</span> <span class="Other">=</span> <span class="Identifier">igVec4</span><span class="Other">(</span><span class="DecNumber">-1</span><span class="Other">,</span> <span class="DecNumber">-1</span><span class="Other">,</span> <span class="DecNumber">-1</span><span class="Other">,</span> <span class="DecNumber">-1</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <a href="imnotify.html#Toast"><span class="Identifier">Toast</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Identifier">TimeEffect</span><span class="Other">]</span></span>.}</pre></dt>
+<dd>
+
+
+&nbsp;&nbsp;<a
+href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L43"
+class="link-seesrc" target="_blank">Source</a>
+&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L43" class="link-seesrc" target="_blank" >Edit</a>
+
+</dd>
+</div>
+<div id="initToaster,float32">
+<dt><pre><span class="Keyword">proc</span> <a href="#initToaster%2Cfloat32"><span class="Identifier">initToaster</span></a><span class="Other">(</span><span class="Identifier">spacing</span> <span class="Other">=</span> <span class="FloatNumber">10.0'f32</span><span class="Other">;</span>
+                 <span class="Identifier">bgColor</span> <span class="Other">=</span> <span class="Identifier">igVec4</span><span class="Other">(</span><span class="FloatNumber">0.078'f32</span><span class="Other">,</span> <span class="FloatNumber">0.078'f32</span><span class="Other">,</span> <span class="FloatNumber">0.078'f32</span><span class="Other">,</span> <span class="FloatNumber">1.0'f32</span><span class="Other">)</span><span class="Other">;</span>
+    <span class="Identifier">hoveredBgColor</span> <span class="Other">=</span> <span class="Identifier">igVec4</span><span class="Other">(</span><span class="FloatNumber">0.137'f32</span><span class="Other">,</span> <span class="FloatNumber">0.137'f32</span><span class="Other">,</span> <span class="FloatNumber">0.137'f32</span><span class="Other">,</span> <span class="FloatNumber">1.0'f32</span><span class="Other">)</span><span class="Other">)</span><span class="Other">:</span> <a href="imnotify.html#Toaster"><span class="Identifier">Toaster</span></a> {.
+    <span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
 <dd>
 
 
@@ -473,18 +501,6 @@ class="link-seesrc" target="_blank">Source</a>
 href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L40"
 class="link-seesrc" target="_blank">Source</a>
 &nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L40" class="link-seesrc" target="_blank" >Edit</a>
-
-</dd>
-</div>
-<div id="initToaster,float32">
-<dt><pre><span class="Keyword">proc</span> <a href="#initToaster%2Cfloat32"><span class="Identifier">initToaster</span></a><span class="Other">(</span><span class="Identifier">spacing</span> <span class="Other">=</span> <span class="FloatNumber">10.0'f32</span><span class="Other">)</span><span class="Other">:</span> <a href="imnotify.html#Toaster"><span class="Identifier">Toaster</span></a> {.<span><span class="Other pragmadots">...</span></span><span class="pragmawrap"><span class="Identifier">raises</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span><span class="Other">,</span> <span class="Identifier">tags</span><span class="Other">:</span> <span class="Other">[</span><span class="Other">]</span></span>.}</pre></dt>
-<dd>
-
-
-&nbsp;&nbsp;<a
-href="https://github.com/Patitotective/imnotify/tree/main/src/imnotify.nim#L37"
-class="link-seesrc" target="_blank">Source</a>
-&nbsp;&nbsp;<a href="https://github.com/Patitotective/imnotify/edit/devel/src/imnotify.nim#L37" class="link-seesrc" target="_blank" >Edit</a>
 
 </dd>
 </div>
@@ -498,7 +514,7 @@ class="link-seesrc" target="_blank">Source</a>
       <div class="twelve-columns footer">
         <span class="nim-sprite"></span>
         <br/>
-        <small style="color: var(--hint);">Made with Nim. Generated: 2022-08-07 00:09:10 UTC</small>
+        <small style="color: var(--hint);">Made with Nim. Generated: 2022-08-13 01:22:04 UTC</small>
       </div>
     </div>
   </div>

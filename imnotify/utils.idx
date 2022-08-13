@@ -1,4 +1,5 @@
 igVec2	imnotify/utils.html#igVec2,float32,float32	utils: igVec2(x, y: float32): ImVec2	
+igVec4	imnotify/utils.html#igVec4,float32,float32,float32,float32	utils: igVec4(x, y, z, w: float32): ImVec4	
 igGetContentRegionAvail	imnotify/utils.html#igGetContentRegionAvail	utils: igGetContentRegionAvail(): ImVec2	
 makeFlags	imnotify/utils.html#makeFlags,varargs[T]	utils: makeFlags[T: enum](flags: varargs[T]): T	
 getMilliseconds	imnotify/utils.html#getMilliseconds	utils: getMilliseconds(): int64	
