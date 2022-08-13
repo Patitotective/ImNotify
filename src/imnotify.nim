@@ -8,7 +8,7 @@
 ## toaster.draw()
 ## ```
 
-import std/strformat
+import std/[strformat, algorithm]
 import nimgl/imgui
 import imnotify/[utils, icons] 
 
@@ -28,14 +28,17 @@ type
     separator*: bool ## Draw a separator between the title and content.
     rightMargin*: float32 ## Space from the right side.
     closeBtn*: bool ## Draw a close button.
+    bgColor*, hoveredBgColor*: ImVec4
 
   Toaster* = object
     data: seq[Toast]
     hovered: int ## Index of the toast hovered
     spacing*: float32 ## Spacing between each toast
+    freeze*: bool ## Freeze all toasts so they do not dismiss automatically.
+    bgColor*, hoveredBgColor*: ImVec4 ## This colors will be applied to any toast that has negative colors.
 
-proc initToaster*(spacing = 10f): Toaster = 
-  Toaster(spacing: spacing, hovered: -1)
+proc initToaster*(spacing = 10f, bgColor = igVec4(0.078f, 0.078f, 0.078f, 1f), hoveredBgColor = igVec4(0.137f, 0.137f, 0.137f, 1f)): Toaster = 
+  Toaster(spacing: spacing, hovered: -1, bgColor: bgColor, hoveredBgColor: hoveredBgColor)
 
 proc initToast*(
   kind: ToastKind, 
@@ -50,6 +53,7 @@ proc initToast*(
   separator = true, 
   rightMargin = 10f, 
   closeBtn = true, 
+  bgColor, hoveredBgColor = igVec4(-1, -1, -1, -1)
 ): Toast = 
   Toast(
     kind: kind, 
@@ -65,31 +69,9 @@ proc initToast*(
     separator: separator, 
     rightMargin: rightMargin, 
     closeBtn: closeBtn, 
+    bgColor: bgColor, 
+    hoveredBgColor: hoveredBgColor, 
   )
-
-proc add*(self: var Toaster, toast: Toast) =
-  self.data.add(toast)
-  self.data[^1].padding = toast.padding # https://github.com/nimgl/nimgl/issues/83 :[
-
-proc addInfo*(self: var Toaster, content: string, title = "") = 
-  ## Helper procedure that creates a `Toast` of `Info` kind.
-  self.data.add(initToast(ToastKind.Info, content, title))
-
-proc addSuccess*(self: var Toaster, content: string, title = "") = 
-  ## Helper procedure that creates a `Toast` of `Sucess` kind.
-  self.data.add(initToast(ToastKind.Success, content, title))
-
-proc addWarning*(self: var Toaster, content: string, title = "") = 
-  ## Helper procedure that creates a `Toast` of `Warning` kind.
-  self.data.add(initToast(ToastKind.Warning, content, title))
-
-proc addError*(self: var Toaster, content: string, title = "") = 
-  ## Helper procedure that creates a `Toast` of `Error` kind.
-  self.data.add(initToast(ToastKind.Error, content, title))
-
-proc addNone*(self: var Toaster, content: string, title = "") = 
-  ## Helper procedure that creates a `None` of `Info` kind.
-  self.data.add(initToast(ToastKind.None, content, title))
 
 proc getTitle*(self: Toast): string = 
   ## Returns the title or each `ToastKind` default title if the title is empty.
@@ -146,6 +128,43 @@ proc getFadePercent*(self: Toast): float32 =
     else:
       1f * self.opacity
 
+proc add*(self: var Toaster, toast: Toast) =
+  self.data.add(toast)
+  self.data[^1].padding = toast.padding # https://github.com/nimgl/nimgl/issues/83 :[
+  self.data[^1].bgColor = 
+    if toast.bgColor.x < 0:
+      self.bgColor
+    else:
+      toast.bgColor
+
+  self.data[^1].hoveredBgColor = 
+    if toast.hoveredBgColor.x < 0:
+      self.hoveredBgColor
+    else:
+      toast.hoveredBgColor
+
+  echo "Added ", toast.getTitle, " at ", self.data.high
+
+proc addInfo*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Info` kind.
+  self.data.add(initToast(ToastKind.Info, content, title))
+
+proc addSuccess*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Sucess` kind.
+  self.data.add(initToast(ToastKind.Success, content, title))
+
+proc addWarning*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Warning` kind.
+  self.data.add(initToast(ToastKind.Warning, content, title))
+
+proc addError*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `Toast` of `Error` kind.
+  self.data.add(initToast(ToastKind.Error, content, title))
+
+proc addNone*(self: var Toaster, content: string, title = "") = 
+  ## Helper procedure that creates a `None` of `Info` kind.
+  self.data.add(initToast(ToastKind.None, content, title))
+
 proc draw*(self: var Toaster) = 
   ## Draw all toasts. Call this in your main Dear ImGui loop.
   let style = igGetStyle()
@@ -159,24 +178,31 @@ proc draw*(self: var Toaster) =
     let toast = self.data[e]
     let isHovered = self.hovered == e
 
-    if toast.getPhase() == ToastPhase.Expired: # Remove toast if expired
+    let phase = toast.getPhase()
+    let icon = toast.getIcon()
+    let defaultTitle = toast.getTitle()
+    let opacity = toast.getFadePercent() # Get opacity based of the current phase
+
+    if phase == ToastPhase.Expired: # Remove toast if expired
       if isHovered:
         self.hovered = -1
 
       expired.add(e)
       continue
 
-    let icon = toast.getIcon()
-    let defaultTitle = toast.getTitle()
-    let opacity = toast.getFadePercent() # Get opacity based of the current phase
+    elif self.freeze and phase in {ToastPhase.Wait, ToastPhase.FadeOut}:
+      if phase == ToastPhase.FadeOut:
+        self.data[e].creationTime = getMilliseconds() - (toast.dismissTime + toast.fadeInOutTime)
+
+      self.data[e].creationTime += 1000 div int igGetIO().framerate
 
     igPushStyleVar(Alpha, opacity)
     igPushStyleVar(WindowRounding, toast.rounding)
     igPushStyleVar(WindowPadding, toast.padding)
     if isHovered:
-      igPushStyleColor(WindowBg, igGetColorU32(FrameBgHovered))
+      igPushStyleColor(WindowBg, toast.hoveredBgColor)
     else:
-      igPushStyleColor(WindowBg, igGetColorU32(FrameBg))
+      igPushStyleColor(WindowBg, toast.bgColor)
 
     igSetNextWindowPos(igVec2(size.x - toast.rightMargin, size.y - height), pivot = igVec2(1f, 1f)) # Set pivot to bottom-right
     igSetNextWindowSize(igVec2(toast.width, 0))
@@ -215,12 +241,16 @@ proc draw*(self: var Toaster) =
 
       if igIsWindowHovered():
         anyHovered = true
+        self.freeze = true
         self.hovered = e
 
     igEnd(); igPopStyleVar(3); igPopStyleColor()
     
   if not anyHovered:
+    self.freeze = false
     self.hovered = -1
 
+  expired.sort(order = SortOrder.Descending)
   for i in expired:
+    echo "Delete ", self.data[i].getTitle(), " at ", i
     self.data.delete(i)

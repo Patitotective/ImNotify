@@ -29,6 +29,10 @@ proc newString(lenght: int, default: string): string =
   result = newString(lenght)
   result[0..default.high] = default
 
+proc igVec2*(x, y: float32): ImVec2 = ImVec2(x: x, y: y)
+
+proc igVec4*(x, y, z, w: float32): ImVec4 = ImVec4(x: x, y: y, z: z, w: w)
+
 proc main() =
   doAssert glfwInit()
 
@@ -38,7 +42,7 @@ proc main() =
   glfwWindowHint(GLFWOpenglProfile, GLFW_OPENGL_CORE_PROFILE)
   glfwWindowHint(GLFWResizable, GLFW_TRUE)
 
-  var w: GLFWWindow = glfwCreateWindow(553, 545)
+  var w: GLFWWindow = glfwCreateWindow(553, 570)
   if w == nil:
     quit(-1)
 
@@ -66,7 +70,7 @@ proc main() =
   var toaster = initToaster()
   var titleBuffer = newString(100, "Hello")
   var contentBuffer = newString(1024, "I'm a nice-looking toast, customize me")
-  var dismissTime = 5000i32
+  var dismissTime = 3000i32
   var fadeInOutTime = 300i32
   var currentKind = int ToastKind.Info
   var padding = [10f, 10f]
@@ -76,7 +80,8 @@ proc main() =
   var separator = true
   var rightMargin = 10f
   var closeBtn = true
-  var bgColor = ImVec4(x: -1)
+  var bgColor = igVec4(0.078f, 0.078f, 0.078f, 1f)
+  var hoveredBgColor = igVec4(0.137f, 0.137f, 0.137f, 1f)
 
   while not w.windowShouldClose:
     glfwPollEvents()
@@ -86,10 +91,7 @@ proc main() =
     igNewFrame()
 
     # Begin
-    if bgColor.x < 0 or bgColor.y < 0 or bgColor.z < 0:
-      bgColor = igGetStyle().colors[ord WindowBg]
-
-    igSetNextWindowPos(ImVec2(x: 0, y: 0), ImGuiCond.Always)
+    igSetNextWindowPos(igVec2(0, 0), ImGuiCond.Always)
     igSetNextWindowSize(igGetMainViewport().workSize, ImGuiCond.Always)
 
     if igBegin("Example", flags = ImGuiWindowFlags.NoResize):
@@ -120,9 +122,14 @@ proc main() =
       igCheckbox("Separator", separator.addr)
       igSliderFloat("Right margin", rightMargin.addr, 0f, 100f, "%.1f")
       igCheckbox("Close button", closeBtn.addr)
+
       var tempArray = [bgColor.x, bgColor.y, bgColor.z]
       if igColorEdit3("Background color", tempArray):
-        bgColor = ImVec4(x: tempArray[0], y: tempArray[1], z: tempArray[2])
+        bgColor = igVec4(tempArray[0], tempArray[1], tempArray[2], 0)
+
+      tempArray = [hoveredBgColor.x, hoveredBgColor.y, hoveredBgColor.z]
+      if igColorEdit3("Hovered background color", tempArray):
+        hoveredBgColor = igVec4(tempArray[0], tempArray[1], tempArray[2], 0)
 
       if igButton("Show"):
         toaster.add(initToast(
@@ -131,20 +138,20 @@ proc main() =
           titleBuffer.cleanString(), 
           dismissTime, 
           fadeInOutTime, 
-          ImVec2(x: padding[0], y: padding[1]), 
+          igVec2(padding[0], padding[1]), 
           opacity, 
           rounding, 
           width, 
           separator, 
           rightMargin, 
           closeBtn,  
+          bgColor, 
+          hoveredBgColor
         ))
 
     igEnd()
 
-    igPushStyleColor(WindowBg, bgColor) # Alpha doesn't really matter
     toaster.draw()
-    igPopStyleColor()
     # End
 
     igRender()
