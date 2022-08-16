@@ -11,8 +11,8 @@ Expired	imnotify.html#Expired	ToastPhase.Expired
 ToastPhase	imnotify.html#ToastPhase	imnotify: ToastPhase	
 Toast	imnotify.html#Toast	imnotify: Toast	
 Toaster	imnotify.html#Toaster	imnotify: Toaster	
-initToaster	imnotify.html#initToaster,float32	imnotify: initToaster(spacing = 10.0&apos;f32;\n            bgColor = igVec4(0.078&apos;f32, 0.078&apos;f32, 0.078&apos;f32, 1.0&apos;f32);\n            hoveredBgColor = igVec4(0.137&apos;f32, 0.137&apos;f32, 0.137&apos;f32, 1.0&apos;f32)): Toaster	
-initToast	imnotify.html#initToast,ToastKind,string,string,int64,int64,float32,float32,float32,float32	imnotify: initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000&apos;i64;\n          fadeInOutTime = 300&apos;i64; padding = igVec2(10, 10); opacity = 1.0&apos;f32;\n          rounding = 5.0&apos;f32; width = 200.0&apos;f32; separator = true;\n          rightMargin = 10.0&apos;f32; closeBtn = true;\n          bgColor, hoveredBgColor = igVec4(-1, -1, -1, -1)): Toast	
+initToaster	imnotify.html#initToaster,float32	imnotify: initToaster(spacing = 10.0&apos;f32): Toaster	
+initToast	imnotify.html#initToast,ToastKind,string,string,int64,int64,float32,float32,float32,float32	imnotify: initToast(kind: ToastKind; content: string; title = &quot;&quot;; dismissTime = 5000&apos;i64;\n          fadeInOutTime = 300&apos;i64; padding = igVec2(10, 10); opacity = 1.0&apos;f32;\n          rounding = 5.0&apos;f32; width = 200.0&apos;f32; separator = true;\n          rightMargin = 10.0&apos;f32; closeBtn = true): Toast	
 getTitle	imnotify.html#getTitle,Toast	imnotify: getTitle(self: Toast): string	
 getIcon	imnotify.html#getIcon,Toast	imnotify: getIcon(self: Toast): string	
 getElapsedTime	imnotify.html#getElapsedTime,Toast	imnotify: getElapsedTime(self: Toast): int64	
