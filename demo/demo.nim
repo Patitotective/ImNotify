@@ -90,7 +90,6 @@ proc main() =
     igGlfwNewFrame()
     igNewFrame()
 
-    # Begin
     igSetNextWindowPos(igVec2(0, 0), ImGuiCond.Always)
     igSetNextWindowSize(igGetMainViewport().workSize, ImGuiCond.Always)
 
@@ -145,13 +144,14 @@ proc main() =
           separator, 
           rightMargin, 
           closeBtn,  
-          bgColor, 
-          hoveredBgColor
         ))
 
     igEnd()
 
+    igPushStyleColor(Header, bgColor)
+    igPushStyleColor(HeaderHovered, hoveredBgColor)
     toaster.draw()
+    igPopStyleColor(2)
     # End
 
     igRender()

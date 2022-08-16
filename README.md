@@ -8,7 +8,7 @@ nimble install imnotify
 ## Basic
 ```nim
 var toaster = initToaster(spacing = 10f) # Spacing between toasts
-toaster.add(initToast(ToastKind.Info, "I'm a notification full of useful information", title = "Hello"))
+toaster.addInfo("I'm a notification full of useful information", title = "Hello")
 
 # Inside Dear ImGui main loop
 ...
@@ -29,7 +29,7 @@ Read the [docs](https://patitotective.github.io/imnotify) for more.
 - `rightMargin`: Distance between the toast and viewport's right side.
 - `closeBtn`: Draw a close button.
 
-_Note: to modify a toast colors use `FrameBg` and `FrameBgHovered` before `toaster.draw()`._
+_Note: to modify a toast colors use `Header` and `HeaderHovered` before `toaster.draw()`._
 
 ## Demo
 For an interactive demo see [demo/](https://github.com/Patitotective/ImNotify/tree/main/demo).  
