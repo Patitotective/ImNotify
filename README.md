@@ -42,7 +42,7 @@ cd ImNotify/demo
 nim c -r demo
 ```
 
-https://user-images.githubusercontent.com/79225325/183262973-1a52eda5-0dec-4b87-9c2b-62daa57f8d68.mp4
+https://user-images.githubusercontent.com/79225325/184793063-42c0a056-5ab4-4e9f-955c-ffc40ef1133d.mp4
 
 ## About
 - GitHub: https://github.com/Patitotective/ImNotify.
