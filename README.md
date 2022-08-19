@@ -5,6 +5,8 @@ Dear ImGui Nim library that draws some nice-looking notifications. (Based upon [
 nimble install imnotify
 ```
 
+> **Note**: Please consider using system notifications instead, for example using [tinydialogs](https://github.com/Patitotective/tinydialogs).
+
 ## Basic
 ```nim
 var toaster = initToaster(spacing = 10f) # Spacing between toasts
