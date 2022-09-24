@@ -46,7 +46,7 @@ https://user-images.githubusercontent.com/79225325/184793063-42c0a056-5ab4-4e9f-
 
 ## About
 - GitHub: https://github.com/Patitotective/ImNotify.
-- Discord: https://discord.gg/as85Q4GnR6.
+- Discord: https://discord.gg/gdcPVjazCG.
 - Icon Font: https://forkaweso.me (MIT).
 
 Contact me:
